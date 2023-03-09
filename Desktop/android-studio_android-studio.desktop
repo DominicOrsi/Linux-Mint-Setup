@@ -1,0 +1,11 @@
+[Desktop Entry]
+X-SnapInstanceName=android-studio
+Version=1.0
+Type=Application
+Name=Android Studio
+Icon=/snap/android-studio/125/android-studio/bin/studio.png
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/android-studio_android-studio.desktop /snap/bin/android-studio %f
+Comment=Android Studio
+Categories=Development;IDE;
+Terminal=false
+StartupWMClass=jetbrains-studio

@@ -1,0 +1,12 @@
+[Desktop Entry]
+X-SnapInstanceName=intellij-idea-community
+Version=1.0
+Type=Application
+Name=IntelliJ IDEA Community Edition
+Icon=/snap/intellij-idea-community/419/bin/idea.png
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/intellij-idea-community_intellij-idea-community.desktop /snap/bin/intellij-idea-community %f
+Comment=Capable and Ergonomic IDE for JVM
+Categories=Development;IDE;
+Terminal=false
+StartupWMClass=jetbrains-idea-ce
+StartupNotify=true
