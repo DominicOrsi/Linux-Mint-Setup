@@ -7,8 +7,8 @@
 #
 
 # Global Variables
-USER="master"
-USBPATH="/media/$USER/LINUXFILES/"
+USER=$SUDO_USER
+PATH="/media/$USER/LINUXFILES/"
 DOWNLOADPATH="/home/$USER/Downloads"
 MACHINENAME=$(hostname)
 HOSTNAMEENDING=".gonzaga.edu"
@@ -19,19 +19,27 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NOCOLOR='\033[0m'
 
-echo -e "${RED}THE USERNAME OF THE USER IS $USER!${NOCOLOR}"
-sleep 5s
-
-echo -e "${RED}THE USERNAME FOR ACTIVE DIRECTORY AUTHENTIFICATION IS $ADUSER!${NOCOLOR}"
-sleep 5s 
-
-echo -e "${GREEN}STARTING INSTALL SCRIPT${NOCOLOR}"
-
 # Removed -e for fail on error to get chmod at the end of the script to work since errors are thrown that we do not care about
 set -u pipefail # fail on error and report it, debug all lines
 
 sudo -n true
 test $? -eq 0 || exit 1 "${RED}YOU SHOULD HAVE SUDO PRIVLEGE TO RUN THIS SCRIPT${NOCOLOR}"
+
+echo -e "${RED}THE USERNAME OF THE USER IS $USER!${NOCOLOR}"
+sleep 3s
+
+echo -e "${RED}THE USERNAME FOR ACTIVE DIRECTORY AUTHENTIFICATION IS $ADUSER!${NOCOLOR}"
+sleep 3s 
+
+# Checking for which path to use
+if [ -e "$PATH" ]; then
+   echo -e "${GREEN}USING USB PATH${NOCOLOR}"
+else 
+   echo -e "${GREEN}CHANGED PATH TO PWD${NOCOLOR}"
+   PATH=$PWD
+fi
+
+echo -e "${GREEN}STARTING INSTALL SCRIPT${NOCOLOR}"
 
 # Changing machine's name
 if [[ ! "$MACHINENAME" == *"$HOSTNAMEENDING" ]]; then
@@ -113,7 +121,7 @@ echo -e "${GREEN}NPM installs done${NOCOLOR}"
 
 # Moving of files from USB to Downloads folder
 echo -e "${GREEN}Moving files from USB to Downloads folder${NOCOLOR}"
-sudo cp $USBPATH/Files/bkgrd_bulldog.jpg /usr/share/backgrounds/linuxmint/default_background.jpg
+sudo cp $PATH/Files/bkgrd_bulldog.jpg /usr/share/backgrounds/linuxmint/default_background.jpg
 echo -e "${GREEN}All done moving files${NOCOLOR}"
 
 # Installing Snap Apps
@@ -141,7 +149,7 @@ sudo apt-get install ./docker-desktop-4.17.0-amd64.deb
 # Read and Write permissions to these files for Docker
 sudo chmod 646 /etc/sub*
 # Moving Docker.sh file to allow docker to by run by non-master users
-sudo cp $USBPATH/Documents/docker.sh /etc/profile.d/docker.sh
+sudo cp $PATH/Documents/docker.sh /etc/profile.d/docker.sh
 
 # Downloading and installing gnupg 
 wget https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.4.0.tar.bz2 -O gnupg-2.tar.bz2
@@ -151,7 +159,7 @@ sudo tar -xf gnupg-2.tar.bz2 -C /opt
 wget https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh -O anaconda.sh
 sudo bash anaconda.sh -b -p /opt/anaconda3
 # Replace root .bashrc with one with conda
-sudo cp $USBPATH/Documents/.bashrc /root/.bashrc
+sudo cp $PATH/Documents/.bashrc /root/.bashrc
 sudo chmod 644 /root/.bashrc
 # Reload bashrc file
 source /root/.bashrcs
@@ -178,20 +186,20 @@ sudo apt update
 sudo apt upgrade -y
 
 # Changing lightdm.conf file to allow user login and hide user list
-sudo cp $USBPATH/Documents/lightdm.conf /etc/lightdm/lightdm.conf
+sudo cp $PATH/Documents/lightdm.conf /etc/lightdm/lightdm.conf
 
 # Changing sudoers file
-sudo cp $USBPATH/Documents/sudoers /etc/sudoers
+sudo cp $PATH/Documents/sudoers /etc/sudoers
 
 # ALlowing SSH
 sudo ufw allow ssh
 sudo ufw enable
-sudo cp $USBPATH/Documents/sshd_config /etc/ssh/sshd_config
+sudo cp $PATH/Documents/sshd_config /etc/ssh/sshd_config
 
 
 # Setting up desktop
-sudo cp -r $USBPATH/Desktop /etc/skel/Desktop
-sudo cp -r $USBPATH/Desktop /home/$USER/
+sudo cp -r $PATH/Desktop /etc/skel/Desktop
+sudo cp -r $PATH/Desktop /home/$USER/
 cd /home/$USER/Desktop
 sudo chown master *.desktop
 sudo chmod +x gio set /home/$USER/Desktop/*.desktop "metadata::trusted" true
@@ -211,9 +219,9 @@ sudo rm /etc/resolv.conf
 sudo service network-manager restart
 
 # Moving configuration files to their respective places
-sudo cp $USBPATH/Documents/sssd.conf /etc/sssd/sssd.conf 
-sudo cp $USBPATH/Documents/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
-sudo cp $USBPATH/Documents/mkhomedir /usr/share/pam-configs/mkhomedir
+sudo cp $PATH/Documents/sssd.conf /etc/sssd/sssd.conf 
+sudo cp $PATH/Documents/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
+sudo cp $PATH/Documents/mkhomedir /usr/share/pam-configs/mkhomedir
 sudo pam-auth-update --enable mkhomedir
 
 # Updating configuration files permissions
