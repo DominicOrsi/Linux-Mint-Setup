@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 # 
 # Date: 03/06/23
 # Notes: Install script for Mint Desktops. Downloads apps and then adds the machine to Active Directory. 
@@ -7,48 +7,48 @@
 #
 
 # Global Variables
-USER=$SUDO_USER
-PATH="/media/$USER/LINUXFILES/"
-DOWNLOADPATH="/home/$USER/Downloads"
-MACHINENAME=$(hostname)
-HOSTNAMEENDING=".gonzaga.edu"
-ADUSER="schnagl"
+user=$SUDO_USER
+path="/media/$user/LINUXFILES/"
+downloadpath="/home/$user/Downloads"
+machinename=$(hostname)
+hostnameending=".gonzaga.edu"
+aduser="schnagl"
 
 # Colors for bash outboot
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-NOCOLOR='\033[0m'
+green='\033[0;32m'
+red='\033[0;31m'
+nocolor='\033[0m'
 
 # Removed -e for fail on error to get chmod at the end of the script to work since errors are thrown that we do not care about
 set -u pipefail # fail on error and report it, debug all lines
 
 sudo -n true
-test $? -eq 0 || exit 1 "${RED}YOU SHOULD HAVE SUDO PRIVLEGE TO RUN THIS SCRIPT${NOCOLOR}"
+test $? -eq 0 || exit 1 "${red}YOU SHOULD HAVE SUDO PRIVLEGE TO RUN THIS SCRIPT${nocolor}"
 
-echo -e "${RED}THE USERNAME OF THE USER IS $USER!${NOCOLOR}"
+echo -e "${red}THE USERNAME OF THE USER IS $user!${nocolor}"
 sleep 3s
 
-echo -e "${RED}THE USERNAME FOR ACTIVE DIRECTORY AUTHENTIFICATION IS $ADUSER!${NOCOLOR}"
+echo -e "${red}THE USERNAME FOR ACTIVE DIRECTORY AUTHENTIFICATION IS $aduser!${nocolor}"
 sleep 3s 
 
 # Checking for which path to use
-if [ -e "$PATH" ]; then
-   echo -e "${GREEN}USING USB PATH${NOCOLOR}"
+if [ -e "$path" ]; then
+   echo -e "${green}USING USB PATH${nocolor}"
 else 
-   echo -e "${GREEN}CHANGED PATH TO PWD${NOCOLOR}"
+   echo -e "${green}CHANGED PATH TO PWD${nocolor}"
    PATH=$PWD
 fi
 
-echo -e "${GREEN}STARTING INSTALL SCRIPT${NOCOLOR}"
+echo -e "${green}STARTING INSTALL SCRIPT${nocolor}"
 
 # Changing machine's name
-if [[ ! "$MACHINENAME" == *"$HOSTNAMEENDING" ]]; then
-   sudo hostnamectl set-hostname $MACHINENAME.gonzaga.edu
+if [[ ! "$machinename" == *"$hostnameending" ]]; then
+   sudo hostnamectl set-hostname $machinename.gonzaga.edu
 fi
 
 # Checking to see if the no snap store preference is there, if it is, remove it
 if [ -f /etc/apt/preferences.d/nosnap.pref ]; then
-   echo -e "${GREEN}Removing nosnap.pref${NOCOLOR}"
+   echo -e "${green}Removing nosnap.pref${nocolor}"
    sudo rm /etc/apt/preferences.d/nosnap.pref
 fi
 
@@ -59,7 +59,7 @@ sudo add-apt-repository ppa:ondrej/php -y
 sudo apt-get update
 sudo apt upgrade -y
 
-echo -e "${GREEN}Installing packages${NOCOLOR}"
+echo -e "${green}Installing packages${nocolor}"
 while read -r p ; do sudo apt-get install -y $p ; done < <(cat << "EOF"
    g++
    nodejs
@@ -110,22 +110,22 @@ while read -r p ; do sudo apt-get install -y $p ; done < <(cat << "EOF"
    apt-transport-https
 EOF
 )
-echo -e "${GREEN}Done installing apt software${NOCOLOR}"
+echo -e "${green}Done installing apt software${nocolor}"
 
 # NPM installs
-echo -e "${GREEN}Starting NPM installs${NOCOLOR}"
+echo -e "${green}Starting NPM installs${nocolor}"
 sudo npm install --global yarn
 # React Native Enviornment Install
 sudo npm install --global expo-cli
-echo -e "${GREEN}NPM installs done${NOCOLOR}"
+echo -e "${green}NPM installs done${nocolor}"
 
 # Moving of files from USB to Downloads folder
-echo -e "${GREEN}Moving files from USB to Downloads folder${NOCOLOR}"
-sudo cp $PATH/Files/bkgrd_bulldog.jpg /usr/share/backgrounds/linuxmint/default_background.jpg
-echo -e "${GREEN}All done moving files${NOCOLOR}"
+echo -e "${green}Moving files from USB to Downloads folder${nocolor}"
+sudo cp $path/Files/bkgrd_bulldog.jpg /usr/share/backgrounds/linuxmint/default_background.jpg
+echo -e "${green}All done moving files${nocolor}"
 
 # Installing Snap Apps
-echo -e "${GREEN}Installing Snap Apps${NOCOLOR}"
+echo -e "${green}Installing Snap Apps${nocolor}"
 sudo snap install flutter --classic
 sudo snap install intellij-idea-community --classic --edge
 sudo snap install heroku --classic
@@ -141,7 +141,7 @@ sudo apt-get update
 # Installing apt packages of docker
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 # Changing Directory to Downloads for wget
-cd /home/$USER/Downloads
+cd /home/$user/Downloads
 # Downloading docker desktop from web
 wget https://desktop.docker.com/linux/main/amd64/docker-desktop-4.17.0-amd64.deb 
 # Installing docker desktop
@@ -149,7 +149,7 @@ sudo apt-get install ./docker-desktop-4.17.0-amd64.deb
 # Read and Write permissions to these files for Docker
 sudo chmod 646 /etc/sub*
 # Moving Docker.sh file to allow docker to by run by non-master users
-sudo cp $PATH/Documents/docker.sh /etc/profile.d/docker.sh
+sudo cp $path/Documents/docker.sh /etc/profile.d/docker.sh
 
 # Downloading and installing gnupg 
 wget https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.4.0.tar.bz2 -O gnupg-2.tar.bz2
@@ -159,7 +159,7 @@ sudo tar -xf gnupg-2.tar.bz2 -C /opt
 wget https://repo.anaconda.com/archive/Anaconda3-2022.10-Linux-x86_64.sh -O anaconda.sh
 sudo bash anaconda.sh -b -p /opt/anaconda3
 # Replace root .bashrc with one with conda
-sudo cp $PATH/Documents/.bashrc /root/.bashrc
+sudo cp $path/Documents/.bashrc /root/.bashrc
 sudo chmod 644 /root/.bashrc
 # Reload bashrc file
 source /root/.bashrcs
@@ -186,23 +186,23 @@ sudo apt update
 sudo apt upgrade -y
 
 # Changing lightdm.conf file to allow user login and hide user list
-sudo cp $PATH/Documents/lightdm.conf /etc/lightdm/lightdm.conf
+sudo cp $path/Documents/lightdm.conf /etc/lightdm/lightdm.conf
 
 # Changing sudoers file
-sudo cp $PATH/Documents/sudoers /etc/sudoers
+sudo cp $path/Documents/sudoers /etc/sudoers
 
 # ALlowing SSH
 sudo ufw allow ssh
 sudo ufw enable
-sudo cp $PATH/Documents/sshd_config /etc/ssh/sshd_config
+sudo cp $path/Documents/sshd_config /etc/ssh/sshd_config
 
 
 # Setting up desktop
-sudo cp -r $PATH/Desktop /etc/skel/Desktop
-sudo cp -r $PATH/Desktop /home/$USER/
-cd /home/$USER/Desktop
+sudo cp -r $path/Desktop /etc/skel/Desktop
+sudo cp -r $path/Desktop /home/$user/
+cd /home/$user/Desktop
 sudo chown master *.desktop
-sudo chmod +x gio set /home/$USER/Desktop/*.desktop "metadata::trusted" true
+sudo chmod +x gio set /home/$user/Desktop/*.desktop "metadata::trusted" true
 sudo chmod +x gio set /etc/skel/Desktop/*.desktop "metadata::trusted" true
 
 # Removing unneeded packages
@@ -219,9 +219,9 @@ sudo rm /etc/resolv.conf
 sudo service network-manager restart
 
 # Moving configuration files to their respective places
-sudo cp $PATH/Documents/sssd.conf /etc/sssd/sssd.conf 
-sudo cp $PATH/Documents/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
-sudo cp $PATH/Documents/mkhomedir /usr/share/pam-configs/mkhomedir
+sudo cp $path/Documents/sssd.conf /etc/sssd/sssd.conf 
+sudo cp $path/Documents/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf
+sudo cp $path/Documents/mkhomedir /usr/share/pam-configs/mkhomedir
 sudo pam-auth-update --enable mkhomedir
 
 # Updating configuration files permissions
@@ -230,15 +230,15 @@ sudo chown root:root /etc/sssd/sssd.conf
 sudo chmod 700 /home/master
 
 # Adding the machine to Active Directory
-sudo realm leave gonzaga.edu -U $ADUSER -v
-sudo realm join gonzaga.edu -U $ADUSER -v
+sudo realm leave gonzaga.edu -U $aduser -v
+sudo realm join gonzaga.edu -U $aduser -v
 
 # Restarting sssd to reflect AD join
 sudo service sssd restart
 
-echo -e "${GREEN}DONE WITH INSTALL!${NOCOLOR}"
+echo -e "${green}DONE WITH INSTALL!${nocolor}"
 
-echo "Do you want to reboot the machine? y/n"
+echo "Do you want to reboot the machine? y/N"
 read REBOOT
 
 if [ "$REBOOT" == "y" ]; then
