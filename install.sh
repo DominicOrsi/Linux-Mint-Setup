@@ -83,6 +83,7 @@ while read -r p ; do sudo apt-get install -y $p ; done < <(cat << "EOF"
    openssh-server
    valgrind
    gedit
+   ocaml
    snapd
    libgl1-mesa-glx 
    libegl1-mesa 
@@ -191,7 +192,7 @@ sudo cp $path/Documents/lightdm.conf /etc/lightdm/lightdm.conf
 # Changing sudoers file
 sudo cp $path/Documents/sudoers /etc/sudoers
 
-# ALlowing SSH
+# Allowing SSH
 sudo ufw allow ssh
 sudo ufw enable
 sudo cp $path/Documents/sshd_config /etc/ssh/sshd_config
@@ -204,6 +205,10 @@ cd /home/$user/Desktop
 sudo chown master *.desktop
 sudo chmod +x gio set /home/$user/Desktop/*.desktop "metadata::trusted" true
 sudo chmod +x gio set /etc/skel/Desktop/*.desktop "metadata::trusted" true
+
+# Setting USB permissions for Adruinos
+sudo cp $USBPATH/Documents/50-myusb.rules /etc/udev/rules.d
+sudo chown root:root /etc/udev/rules.d
 
 # Removing unneeded packages
 sudo apt autoremove -y
