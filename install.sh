@@ -210,6 +210,10 @@ sudo chmod +x gio set /etc/skel/Desktop/*.desktop "metadata::trusted" true
 sudo cp $USBPATH/Documents/50-myusb.rules /etc/udev/rules.d
 sudo chown root:root /etc/udev/rules.d
 
+# Setting tmp file permissions for Adruinos
+mkdir /tmp/arduino
+sudo chmod 777 /tmp/arduino
+
 # Removing unneeded packages
 sudo apt autoremove -y
 
